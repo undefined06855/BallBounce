@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html dir="ltr">
+    <head>
+        <title>Bouncing Ball</title>
+
+        <link type="image/x-icon" href="favicon.ico?" rel="icon" />
+
+        <style type="text/css">
+            * {
+                margin: 0;
+                padding: 0;
+            }
+
+            *:not(canvas, body) {
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
+
+            body {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #wrapper {
+                width: 100vw;
+                height: 100vh;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            #background {
+                background-image: url("./bg.png");
+                background-repeat: repeat;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            canvas {
+                box-shadow: 0px 0px 30px 4px #000;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div id="background"></div>
+        <div id="wrapper">
+            <canvas></canvas>
+        </div>
+
+        <div id="images" style="display: none;">
+            <img type="image/png" src="./tilesheet.png" id="tilesheet" />
+        </div>
+
+        <script type="text/javascript">
+            function percent(num)
+            {
+                return screensize * (num / 100)
+            }
+
+            // vars
+
+            const tilesheet = document.getElementById("tilesheet")
+
+                , offsets = {
+                    ball: [
+                        1, 24 // xoffset, width
+                    ],
+                    spike1: [
+                        26, 16
+                    ],
+                    spike2: [
+                        42, 16  
+                    ]
+                }
+            var canvas = document.querySelector("canvas")
+              , ctx = canvas.getContext("2d")
+
+              , ballx = 0
+              , bally = 999
+              , dx = -5
+              , dy = 0
+
+            function refresh()
+            {
+                if (window.innerWidth > window.innerHeight)
+                    screensize = window.innerHeight
+                else
+                    screensize = window.innerWidth;
+
+                
+                canvas.width = screensize - percent(5);
+                canvas.height = screensize - percent(5);
+
+                clear();
+            }
+
+            function clear()
+            {
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            function draw(element, x, y)
+            {
+                if (offsets[element] !== undefined)
+                    ctx.drawImage(tilesheet, offsets[element][0], 0, offsets[element][1], 24, x, y, offsets[element][1], 24)
+            }
+
+            function frame()
+            {
+                clear();
+
+                ballx += dx
+                if (ballx <= 0)
+                    dx = 5
+                if (ballx >= canvas.width - 24)
+                    dx = -5
+
+                dy += 1
+                bally += dy
+                if (bally > canvas.height - 24)
+                    dy = 
+                draw("ball", ballx, bally)
+                requestAnimationFrame(frame)
+            }
+
+            tilesheet.onload = function()
+            {
+                refresh();
+                bally = canvas.height / 2
+                window.addEventListener("resize", refresh)
+
+                requestAnimationFrame(frame)
+            }
+            
+        </script>
+    </body>
+</html>
