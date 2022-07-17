@@ -46,7 +46,7 @@
         </style>
     </head>
 
-    <body>
+    <body onload="load()">
         <div id="background"></div>
         <div id="wrapper">
             <canvas></canvas>
@@ -54,6 +54,7 @@
 
         <div id="images" style="display: none;">
             <img type="image/png" src="./tilesheet.png" id="tilesheet" />
+            <img type="image/png" src="./ball.png" id="ballimg" />
         </div>
 
         <script type="text/javascript">
@@ -65,16 +66,17 @@
             // vars
 
             const tilesheet = document.getElementById("tilesheet")
+                , ballimg = document.getElementById("ballimg")
+                , images = document.getElementById("images")
+                , TO_RADIANS = Math.PI/180
 
                 , offsets = {
-                    ball: [
-                        1, 24 // xoffset, width
-                    ],
+
                     spike1: [
-                        26, 16
+                        0, 16
                     ],
                     spike2: [
-                        42, 16  
+                        17, 16  
                     ]
                 }
             var canvas = document.querySelector("canvas")
@@ -101,38 +103,52 @@
 
             function clear()
             {
+
                 ctx.fillStyle = "white";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
 
-            function draw(element, x, y)
+            function draw(element, x, y, rot)
             {
-                if (offsets[element] !== undefined)
-                    ctx.drawImage(tilesheet, offsets[element][0], 0, offsets[element][1], 24, x, y, offsets[element][1], 24)
+                if (offsets[element] !== undefined || element == "ball")
+                {
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(rot * TO_RADIANS);
+
+                    console.log("draw")
+                    if (element === "ball")
+                        ctx.drawImage(ballimg, 0, 0, 72, 72)
+                    else
+                        ctx.drawImage(tilesheet, offsets[element][0], 0, offsets[element][1], 24, 0, 0, offsets[element][1], 24)
+                    
+                    ctx.restore();
+                }
             }
 
             function frame()
             {
+
                 clear();
 
                 ballx += dx
                 if (ballx <= 0)
                     dx = 5
-                if (ballx >= canvas.width - 24)
+                if (ballx >= canvas.width - 72)
                     dx = -5
 
-                dy += 1
+                dy += 5
                 bally += dy
-                if (bally > canvas.height - 24)
-                    dy = 
-                draw("ball", ballx, bally)
+                if (bally > canvas.height - 72)
+                    dy = -50
+                draw("ball", ballx, bally, ballx)
                 requestAnimationFrame(frame)
             }
 
-            tilesheet.onload = function()
+            function load()
             {
                 refresh();
-                bally = canvas.height / 2
+                bally = 0
                 window.addEventListener("resize", refresh)
 
                 requestAnimationFrame(frame)
